@@ -27,3 +27,14 @@ type construction struct {
 func (c *construction) define(name string, value point) {
 	c.Points[name] = value
 }
+
+type instruction struct {
+}
+
+type renderer interface {
+	render(i instruction)
+}
+
+func construct(c construction, instructions []instruction, r renderer) {
+
+}
