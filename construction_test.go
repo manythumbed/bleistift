@@ -32,3 +32,8 @@ func pointsEqual(t *testing.T, a, b pdf.Point) {
 		t.Errorf("%v should equal %v)", a, b)
 	}
 }
+
+func testConstruction(t *testing.T) {
+	c := construction{}
+	c.define("a", point(1, 1))
+}
