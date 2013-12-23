@@ -1,27 +1,29 @@
 package bleistift
 
-import "bitbucket.org/zombiezen/gopdf/pdf"
-
-func project(a, b pdf.Point, d pdf.Unit) pdf.Point {
-	return plus(a, multiply(minus(b, a), d))
+func project(a, b point, d float32) point {
+	return a.plus(b.minus(a).scale(d))
 }
 
-func plus(a, b pdf.Point) pdf.Point {
-	return pdf.Point{a.X + b.X, a.Y + b.Y}
+type point struct {
+	X, Y float32
 }
 
-func minus(a, b pdf.Point) pdf.Point {
-	return pdf.Point{a.X - b.X, a.Y - b.Y}
+func (p point) plus(p1 point) point {
+	return point{p.X + p1.X, p.Y + p1.Y}
 }
 
-func multiply(a pdf.Point, s pdf.Unit) pdf.Point {
-	return pdf.Point{s * a.X, s * a.Y}
+func (p point) minus(p1 point) point {
+	return point{p.X - p1.X, p.Y - p1.Y}
+}
+
+func (p point) scale(s float32) point {
+	return point{s * p.X, s * p.Y}
 }
 
 type construction struct {
-	Points map[string]pdf.Point
+	Points map[string]point
 }
 
-func (c *construction) define(name string, value pdf.Point) {
+func (c *construction) define(name string, value point) {
 	c.Points[name] = value
 }
