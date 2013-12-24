@@ -28,7 +28,33 @@ func pointsEqual(t *testing.T, a, b point) {
 	}
 }
 
-func testConstruction(t *testing.T) {
-	c := construction{}
+func TestConstruction(t *testing.T) {
+	c := new()
 	c.define("a", point{1, 1})
+
+	ok, err := construct(c, []interface{}{line{"a", "a"}, curve{"a", "a", "a"}}, logRenderer{})
+	if !ok {
+		t.Errorf("Should have constructed but failed")
+		t.Errorf("Errors", err)
+	}
+}
+
+func TestConstructionWithErrors(t *testing.T) {
+	c := new()
+	c.define("a", point{1, 1})
+
+	ok, err := construct(c, []interface{}{line{"b", "b"}, curve{"b", "b", "b"}}, logRenderer{})
+	if !ok {
+		t.Errorf("Should have constructed but failed")
+		t.Errorf("Errors", err)
+	}
+}
+
+type logRenderer struct {
+}
+
+func (l logRenderer) line(p1, p2 point) {
+}
+
+func (l logRenderer) curve(p1, p2, p3 point) {
 }

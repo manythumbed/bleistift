@@ -1,5 +1,9 @@
 package bleistift
 
+import (
+	"fmt"
+)
+
 func project(a, b point, d float32) point {
 	return a.plus(b.minus(a).scale(d))
 }
@@ -24,14 +28,11 @@ type construction struct {
 	points map[string]point
 }
 
+func new() construction {
+	return construction{map[string]point{}}
+}
 func (c *construction) define(name string, value point) {
 	c.points[name] = value
-}
-
-func (c *construction) point(name string) (point, bool) {
-	p, ok := c.points[name]
-
-	return p, ok
 }
 
 type renderer interface {
@@ -47,22 +48,44 @@ type line struct {
 	p1, p2 string
 }
 
-func construct(c construction, instructions []interface{}, r renderer) {
+type errors struct {
+	list []string
+}
+
+func (es errors) Error() string {
+	return fmt.Sprintf("There are %d errors", len(es.list))
+}
+
+func (es errors) add(e error) {
+	if e != nil {
+		es.list = append(es.list, e.Error())
+	}
+}
+
+func construct(c construction, instructions []interface{}, r renderer) (bool, error) {
+	e := errors{}
 	for _, v := range instructions {
 		switch t := v.(type) {
 		default:
 		case curve:
-			p1, ok := c.point(t.p1)
-			if !ok {
-			}
-			p2, ok := c.point(t.p2)
-			if !ok {
-			}
-			p3, ok := c.point(t.p3)
-			if !ok {
-			}
+			p1, err := c.point(t.p1)
+			e.add(err)
+			p2, err := c.point(t.p2)
+			e.add(err)
+			p3, err := c.point(t.p3)
+			e.add(err)
 			r.curve(p1, p2, p3)
 		}
-
 	}
+
+	return true, e
+}
+
+func (c *construction) point(name string) (point, error) {
+	p, ok := c.points[name]
+	if ok {
+		return p, nil
+	}
+
+	return point{}, fmt.Errorf("Unable to find point (%s) in construction", name)
 }
