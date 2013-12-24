@@ -1,6 +1,9 @@
 package bleistift
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestProjection(t *testing.T) {
 	a := point{1.0, 1.0}
@@ -32,9 +35,14 @@ func TestConstruction(t *testing.T) {
 	c := new()
 	c.define("a", point{1, 1})
 
-	err := construct(c, []interface{}{line{"a", "a"}, curve{"a", "a", "a"}}, logRenderer{})
+	log := &logRenderer{}
+	err := construct(c, []interface{}{line{"a", "a"}, curve{"a", "a", "a"}}, log)
 	if err != nil {
 		t.Errorf("Should have constructed without errors. %v", err)
+	}
+
+	if len(log.instructions) != 2 {
+		t.Errorf("Expected 2 instructions, received %d", len(log.instructions))
 	}
 }
 
@@ -42,20 +50,27 @@ func TestConstructionWithErrors(t *testing.T) {
 	c := new()
 	c.define("a", point{1, 1})
 
-	err := construct(c, []interface{}{line{"b", "b"}, curve{"b", "b", "b"}}, logRenderer{})
+	log := &logRenderer{}
+	err := construct(c, []interface{}{line{"b", "b"}, curve{"b", "b", "b"}}, log)
 	if err == nil {
 		t.Errorf("Should have returned errors")
 	}
-	if err.Error() != "There are 3 errors" {
+	if err.Error() != "There are 5 errors" {
 		t.Errorf("%v", err.Error())
+	}
+	if len(log.instructions) != 2 {
+		t.Errorf("Expected 2 instructions, received %d", len(log.instructions))
 	}
 }
 
 type logRenderer struct {
+	instructions []string
 }
 
-func (l logRenderer) line(p1, p2 point) {
+func (l *logRenderer) line(p1, p2 point) {
+	l.instructions = append(l.instructions, fmt.Sprintf("L [%v %v]", p1, p2))
 }
 
-func (l logRenderer) curve(p1, p2, p3 point) {
+func (l *logRenderer) curve(p1, p2, p3 point) {
+	l.instructions = append(l.instructions, fmt.Sprintf("C [%v %v %v]", p1, p2, p3))
 }

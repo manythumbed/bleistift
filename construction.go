@@ -79,6 +79,12 @@ func construct(c construction, instructions []interface{}, r renderer) error {
 			p3, err := c.point(t.p3)
 			e.add(err)
 			r.curve(p1, p2, p3)
+		case line:
+			p1, err := c.point(t.p1)
+			e.add(err)
+			p2, err := c.point(t.p2)
+			e.add(err)
+			r.line(p1, p2)
 		}
 	}
 
