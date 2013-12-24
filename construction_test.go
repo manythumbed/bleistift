@@ -32,10 +32,9 @@ func TestConstruction(t *testing.T) {
 	c := new()
 	c.define("a", point{1, 1})
 
-	ok, err := construct(c, []interface{}{line{"a", "a"}, curve{"a", "a", "a"}}, logRenderer{})
-	if !ok {
-		t.Errorf("Should have constructed but failed")
-		t.Errorf("Errors", err)
+	err := construct(c, []interface{}{line{"a", "a"}, curve{"a", "a", "a"}}, logRenderer{})
+	if err != nil {
+		t.Errorf("Should have constructed without errors. %v", err)
 	}
 }
 
@@ -43,10 +42,12 @@ func TestConstructionWithErrors(t *testing.T) {
 	c := new()
 	c.define("a", point{1, 1})
 
-	ok, err := construct(c, []interface{}{line{"b", "b"}, curve{"b", "b", "b"}}, logRenderer{})
-	if !ok {
-		t.Errorf("Should have constructed but failed")
-		t.Errorf("Errors", err)
+	err := construct(c, []interface{}{line{"b", "b"}, curve{"b", "b", "b"}}, logRenderer{})
+	if err == nil {
+		t.Errorf("Should have returned errors")
+	}
+	if err.Error() != "There are 3 errors" {
+		t.Errorf("%v", err.Error())
 	}
 }
 

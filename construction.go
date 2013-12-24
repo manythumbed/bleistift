@@ -56,13 +56,17 @@ func (es errors) Error() string {
 	return fmt.Sprintf("There are %d errors", len(es.list))
 }
 
-func (es errors) add(e error) {
+func (es *errors) add(e error) {
 	if e != nil {
 		es.list = append(es.list, e.Error())
 	}
 }
 
-func construct(c construction, instructions []interface{}, r renderer) (bool, error) {
+func (es errors) ok() bool {
+	return len(es.list) == 0
+}
+
+func construct(c construction, instructions []interface{}, r renderer) error {
 	e := errors{}
 	for _, v := range instructions {
 		switch t := v.(type) {
@@ -78,7 +82,11 @@ func construct(c construction, instructions []interface{}, r renderer) (bool, er
 		}
 	}
 
-	return true, e
+	if e.ok() {
+		return nil
+	}
+
+	return e
 }
 
 func (c *construction) point(name string) (point, error) {
