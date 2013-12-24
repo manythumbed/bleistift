@@ -21,20 +21,48 @@ func (p point) scale(s float32) point {
 }
 
 type construction struct {
-	Points map[string]point
+	points map[string]point
 }
 
 func (c *construction) define(name string, value point) {
-	c.Points[name] = value
+	c.points[name] = value
 }
 
-type instruction struct {
+func (c *construction) point(name string) (point, bool) {
+	p, ok := c.points[name]
+
+	return p, ok
 }
 
 type renderer interface {
-	render(i instruction)
+	line(p1, p2 point)
+	curve(p1, p2, p3 point)
 }
 
-func construct(c construction, instructions []instruction, r renderer) {
+type curve struct {
+	p1, p2, p3 string
+}
 
+type line struct {
+	p1, p2 string
+}
+
+func construct(c construction, instructions []interface{}, r renderer) {
+	for _, v := range instructions {
+		switch t := v.(type) {
+		default:
+		case curve:
+			p1, ok := c.point(t.p1)
+			if !ok {
+			}
+			p2, ok := c.point(t.p2)
+			if !ok {
+			}
+			p3, ok := c.point(t.p3)
+			if !ok {
+			}
+			r.curve(p1, p2, p3)
+		}
+
+	}
 }
