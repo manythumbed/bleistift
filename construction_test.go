@@ -63,6 +63,24 @@ func TestConstructionWithErrors(t *testing.T) {
 	}
 }
 
+func TestHollowRectangle(t *testing.T) {
+	construction := new()
+	construction.define("a", point{1, 1})
+	construction.define("b", point{4, 1})
+	construction.define("c", point{4, 4})
+	construction.define("d", point{1, 4})
+
+	log := &logRenderer{}
+	lineAB := line{"a", "b"}
+	lineBC := line{"b", "c"}
+	lineCD := line{"c", "d"}
+	lineDA := line{"d", "a"}
+	err := construct(construction, []interface{}{lineAB, lineBC, lineCD, lineDA}, log)
+	if err != nil {
+		t.Errorf("Should have rendered without errors")
+	}
+}
+
 type logRenderer struct {
 	instructions []string
 }
