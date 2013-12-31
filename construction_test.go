@@ -75,9 +75,14 @@ func TestHollowRectangle(t *testing.T) {
 	lineBC := line{"b", "c"}
 	lineCD := line{"c", "d"}
 	lineDA := line{"d", "a"}
+
 	err := construct(construction, []interface{}{lineAB, lineBC, lineCD, lineDA}, log)
 	if err != nil {
 		t.Errorf("Should have rendered without errors")
+	}
+
+	if len(log.instructions) != 4 {
+		t.Errorf("Should have rendered four instructions")
 	}
 }
 
