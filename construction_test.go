@@ -97,3 +97,7 @@ func (l *logRenderer) line(p1, p2 point) {
 func (l *logRenderer) curve(p1, p2, p3 point) {
 	l.instructions = append(l.instructions, fmt.Sprintf("C [%v %v %v]", p1, p2, p3))
 }
+
+func (l *logRenderer) move(p point) {
+	l.instructions = append(l.instructions, fmt.Sprintf("M [%v]", p))
+}

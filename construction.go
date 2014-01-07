@@ -38,6 +38,7 @@ func (c *construction) define(name string, value point) {
 type renderer interface {
 	line(p1, p2 point)
 	curve(p1, p2, p3 point)
+	move(p point)
 }
 
 type curve struct {
@@ -46,6 +47,10 @@ type curve struct {
 
 type line struct {
 	p1, p2 string
+}
+
+type move struct {
+	p string
 }
 
 type errors struct {
@@ -85,6 +90,10 @@ func construct(c construction, instructions []interface{}, r renderer) error {
 			p2, err := c.point(t.p2)
 			e.add(err)
 			r.line(p1, p2)
+		case move:
+			p, err := c.point(t.p)
+			e.add(err)
+			r.move(p)
 		}
 	}
 
